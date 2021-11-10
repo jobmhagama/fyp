@@ -13,7 +13,7 @@ var window              = new Window();
 const fs                =require("fs")
 const tenderJSON        = require('../build/contracts/TenderAuction.json')
 const truffleContract   = require('truffle-contract');
-const address            = "0x433c50F5112e5adC65438636eB72bF3e7690B572"
+const address            = "0x1d07C581755b9B59e02755ca59Ab92D0AB0Ed8a4"
 const abi = fs.readFileSync(__dirname+"/abi.json")
 var User                = require("./models/user");
 
@@ -54,6 +54,14 @@ app.get('/tenderJSON', (req,res) => {
 app.get('/truffleContract', (req,res) => {
     res.send(truffleContract);
 });
+
+const Account = async ()=>{
+    await web3.eth.getAccounts().then((result)=>{
+        App.account = result[0];
+        
+        
+    });
+}
 
 app.get('/', (req,res) => {
     if(req.user) {
