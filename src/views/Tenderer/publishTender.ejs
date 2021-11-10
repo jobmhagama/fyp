@@ -1,0 +1,117 @@
+<%- include ("sidebar")%>
+
+  <div class="row" onload="App.listMyTenders();">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Publish Your New tender</h5>
+       
+            <table id="mytenders" class="table table-hover">
+                <center>
+                    <h6><b>My Tenders</b></h6>
+                </center>
+                <hr style="margin-top: -5px; margin-bottom: -1px;">
+                <tr style="text-align:center">
+                    <td>Id</td>
+                    <td>Tender name</td>
+                    <td>Quantity</td>
+                    <td>Description</td>
+                    <td>status</td>
+                    <td>Action1</td>
+                    <td>Action2</td>
+                </tr>
+                <tbody id="tenders">
+
+                </tbody>
+
+            </table>
+  
+          <!-- End Table with stripped rows -->
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+<script src=" demo.js"></script>  
+<script>
+let address = "<%- address %>";
+let abi =  [
+    
+     " function  tenderCounts()public view returns(uint _counts)",
+     "function tender(uint _no) public view returns(uint _id,string memory _name,string memory _desc,uint _quantity,string memory _status) ",
+     "function  updateTender(uint _tid) public"
+]
+
+     // A Web3Provider wraps a standard Web3 provider, which is
+// what MetaMask injects as window.ethereum into each page
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+// The MetaMask plugin also allows signing transactions to
+// send ether and pay to change state within the blockchain.
+// For this, you need the account signer...
+const signer = provider.getSigner()
+//get the contract in write mode
+//fetch contract in readonly mode
+const contract = new ethers.Contract(address,abi,provider)
+const contractW = new ethers.Contract(address,abi,signer)
+
+
+
+ $(document).ready(async ()=>{
+
+
+let balance=signer.getBalance()
+
+contract.tenderCounts().then((data)=>{
+  //Nt number of tenders belongs to this user
+   let nt = parseInt(data)
+
+
+
+ 
+   for(i= 1;i<=nt; i++){
+     
+    contract.tender(i).then((tender)=>{
+
+
+      const tenderTemplate = `<tr style="text-align:center">
+                                            <td>${tender[0]}</td>
+                                            <td>${tender[1]}</td>
+                                            <td>${tender[3]}</td>
+                                            <td>${tender[2]}</td>
+                                            <td>${tender[4]}</td>
+                                            <td><a href="#" onclick="update(${tender[0]});" class="btn btn-info">Update </a ></td>  
+                                            <td><a href="#" onclick="publish(${tender[0]});" class="btn btn-primary">pulish</a ></td> >                           
+                              </tr>`;
+                $("#tenders").append(tenderTemplate);
+          
+    })
+
+
+   }
+
+
+})
+
+
+ })
+
+
+ async function update(id){
+
+  await contractW.updateTender(id).then((receipt)=>{
+    console.log(receipt)
+ })
+    
+      refreshPage();
+  
+}
+
+function refreshPage(){
+    window.location.reload();
+} 
+</script>
+
+  <%- include ("footer") %>

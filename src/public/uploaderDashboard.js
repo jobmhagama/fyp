@@ -11,16 +11,16 @@ App = {
     },
 
     listMyTenders: async () => {
-        const tenderCount = await App.TenderAuction.tenderCount();
+        const tenderCount = await App.TenderAuction.tenderCounts();
         for(i = 1; i <= tenderCount; i++) {
-            const tender = await App.TenderAuction.tenders(i);
+            const tender = await App.TenderAuction.tender(i);
             if(tender[4] == App.account) {
                 const tenderTemplate = `<tr style="text-align:center">
                                             <td>${tender[0]}</td>
                                             <td>${tender[1]}</td>
                                             <td>${tender[3]}</td>
                                         </tr>`;
-                $("#mytenders").append(tenderTemplate);
+                $("#tenders").append(tenderTemplate);
             }
         }
     },
@@ -32,8 +32,8 @@ App = {
         const itemQuantity = $("#itemQuantity").val();
 
         try{
-            await App.TenderAuction.createTender(itemName, itemDesc, itemQuantity, {from:App.account});
-            window.location.reload();
+            await App.Auction.createTender(itemName, itemDesc, itemQuantity, {from:App.account});
+            window.location.reload(Tender);
         }catch{
             window.location.reload();
         }

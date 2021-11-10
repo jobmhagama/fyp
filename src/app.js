@@ -10,13 +10,14 @@ var jsdom               = require('jsdom');
 var $                   = require('jquery')(new jsdom.JSDOM().window);
 var Window              = require('window');
 var window              = new Window();
-
+const fs                =require("fs")
 const tenderJSON        = require('../build/contracts/TenderAuction.json')
 const truffleContract   = require('truffle-contract');
-
+const address            = "0x433c50F5112e5adC65438636eB72bF3e7690B572"
+const abi = fs.readFileSync(__dirname+"/abi.json")
 var User                = require("./models/user");
 
-//CREATING EXPRESS-SESSION
+//CREATING EXPRESS-SESSIONut
 app.use(require("express-session")({
     secret: "Hi there",
     resave: false,
@@ -30,7 +31,7 @@ passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(express.urlencoded({extended:true}));
 
 app.use(express.static("public"));
 app.set('view engine', 'ejs');
@@ -106,7 +107,7 @@ app.get('/uploaderDashboard', (req,res) => {
     if(req.user) {
         if(req.user.type != 'false') {
             if(req.user.type == 'uploader') {
-                res.render('uploaderDashboard.ejs');
+                res.render('Tenderer/index.ejs');
             } else {
                 res.redirect('/dashboard');
             }
@@ -123,6 +124,37 @@ app.get('/bidderDashboard', (req,res) => {
         if(req.user.type != 'false') {
             if(req.user.type == 'bidder') {
                 res.render('bidderDashboard.ejs');
+            } else {
+                res.redirect('/dashboard');
+            }
+        } else {
+            res.redirect('/confirmType');
+        }
+    } else {
+        res.redirect('/');
+    }
+});
+app.get('/newtender', (req,res) => {
+    if(req.user) {
+        if(req.user.type != 'false') {
+            if(req.user.type == 'uploader') {
+                res.render('Tenderer/newtender.ejs',{abi,address});
+            } else {
+                res.redirect('/dashboard');
+            }
+        } else {
+            res.redirect('/confirmType');
+        }
+    } else {
+        res.redirect('/');
+    }
+});
+
+app.get('/publishtender', (req,res) => {
+    if(req.user) {
+        if(req.user.type != 'false') {
+            if(req.user.type == 'uploader') {
+                res.render('Tenderer/publishTender.ejs',{address});
             } else {
                 res.redirect('/dashboard');
             }

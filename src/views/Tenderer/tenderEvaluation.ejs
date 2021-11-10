@@ -1,0 +1,80 @@
+<%- include ("sidebar")%>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Award the winner for the tender</h5>
+          <!-- Table with stripped rows -->
+          <table class="table datatable table-stripped table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Tender #</th>
+                <th scope="col">Title</th>
+                <th scope="col">description</th>
+                <th scope="col">Status</th>
+                <th scope="col">Start Date</th>
+                <th scope="col">Clossing date</th>
+                <th scope="col">Action1</th>          
+              </tr>
+            </thead>
+            <tbody id="tenders">
+
+            </tbody>
+          </table>
+          <!-- End Table with stripped rows -->
+
+        </div>
+      </div>
+
+    </div>
+
+
+
+  </div>
+
+
+
+
+
+
+  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+  <script src="JQ/jq.js"></script>
+  <script>
+    let address = "<%= address %>";
+    let abi = <%- abi %>
+
+      $(document).ready(() => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const signer = provider.getSigner()
+        const TenderR = new ethers.Contract(address, abi, provider);
+
+        TenderR.CountTenders().then((tenderscount) => {
+
+          let nt = parseInt(tenderscount)
+
+          for (let i = 1; i <= nt; i++) {
+
+            TenderR.getTender(i).then((tender) => {
+               console.log(typeof(tender.status))
+        
+               $('#tenders').append("<tr><td>"+parseInt(tender._tid)+"</td><td>"+tender.title+"</td><td>"+tender.description+"</td><td>"+tender.status+"</td> <td>"+tender._odate+"</td><td>"+tender._cdate+"</td><td> <input type='submit' class='form-control btn btn-primary' value='Bidders list'> </td></tr>")
+
+
+            })
+
+          }
+
+
+        }).catch((err)=>{
+
+           console.log(err)
+
+        })
+
+
+
+
+      })
+  </script>
+
+  <%- include ("footer") %>

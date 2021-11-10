@@ -87,4 +87,17 @@ contract TenderAuction {
         string memory tenderName = tenders[_tenderId].itemName;
         bids[bidCount] = Bid(bidCount, _tenderId, tenderName, _bid, msg.sender);
     }
+
+    function  tenderCounts()public view returns(uint _counts) {
+
+        return tenderCount;
+        
+    }
+
+
+    function tender(uint _no) public view returns(uint _id,string memory _name,string memory _desc,uint _quantity) {
+
+        return(tenders[_no].id,tenders[_no].itemName,tenders[_no].itemDescription,tenders[_no].quantity);
+
+    }
 }

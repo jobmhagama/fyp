@@ -1,0 +1,14 @@
+body{
+
+    font-style: normal;
+    font-family: 'Times New Roman', Times, serif;
+   font-size:smaller;
+    font-variant-ligatures: common-ligatures;
+    background-color:#ffff
+}
+
+hr{
+
+  background-size: 2px;
+  
+}

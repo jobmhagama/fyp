@@ -41,11 +41,13 @@ Default = {
     },
 
     loadContract: async () => {
-        const TenderAuction = await $.getJSON('/tenderJSON');
+        const TenderAuction = await $.getJSON(newFunction());
         Default.contracts.TenderAuction = TruffleContract(TenderAuction);
-        Default.contracts.TenderAuction.setProvider(App.web3Provider);
         
+        Default.contracts.TenderAuction.setProvider(App.web3Provider);
+
         App.TenderAuction = await Default.contracts.TenderAuction.deployed();
+
     }
 }
 
@@ -54,3 +56,7 @@ $(() => {
         Default.load();
     })
 });
+
+function newFunction() {
+    return '/tenderJSON';
+}
