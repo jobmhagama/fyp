@@ -13,7 +13,7 @@ var window              = new Window();
 const fs                =require("fs")
 const tenderJSON        = require('../build/contracts/TenderAuction.json')
 const truffleContract   = require('truffle-contract');
-const address            = "0x1d07C581755b9B59e02755ca59Ab92D0AB0Ed8a4"
+const address            = "0x62d449562DFea2da47c385aE2619E0B5eDF6d72B"
 const abi = fs.readFileSync(__dirname+"/abi.json")
 var User                = require("./models/user");
 
@@ -163,6 +163,25 @@ app.get('/publishtender', (req,res) => {
         if(req.user.type != 'false') {
             if(req.user.type == 'uploader') {
                 res.render('Tenderer/publishTender.ejs',{address});
+            } else {
+                res.redirect('/dashboard');
+            }
+        } else {
+            res.redirect('/confirmType');
+        }
+    } else {
+        res.redirect('/');
+    }
+});
+
+
+app.get('/tenderupdate', (req,res) => {
+    if(req.user) {
+        if(req.user.type != 'false') {
+            if(req.user.type == 'uploader') {
+                 let tid = req.query.id
+                 console.log(tid)
+                res.render('Tenderer/updatetender.ejs',{address,tid});
             } else {
                 res.redirect('/dashboard');
             }

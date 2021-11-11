@@ -1,15 +1,25 @@
 <%- include ("sidebar")%>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card" id="info">
+        <div class="card-body bg-info">
 
-  <div class="row" onload="App.listMyTenders();">
+          Current there is no records for tenders
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
     <div class="col-md-12">
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Publish Your New tender</h5>
-
           <table id="mytenders" class="table table-hover">
-            <center>
-              <h6><b>My Tenders</b></h6>
-            </center>
+
+            <h6><b>My Tenders</b></h6>
+
             <hr style="margin-top: -5px; margin-bottom: -1px;">
             <thead>
               <tr style="text-align:center">
@@ -48,8 +58,9 @@
     let address = "<%- address %>";
     let abi = [
 
-      " function  tenderCounts()public view returns(uint _counts)",
+      " function tenderCounts()public view returns(uint _counts)",
       "function tender(uint _no) public view returns(uint _id,string memory _name,string memory _desc,uint _quantity,string memory _status,address _address) ",
+      "function  publish(uint _tid) public",
       "function  updateTender(uint _tid) public"
     ]
 
@@ -60,7 +71,7 @@
     // send ether and pay to change state within the blockchain.
     // For this, you need the account signer...
     const signer = provider.getSigner()
- 
+
     //get the contract in write mode
     //fetch contract in readonly mode
     const contract = new ethers.Contract(address, abi, provider)
@@ -72,33 +83,35 @@
 
 
     $(document).ready(async () => {
-    // user address 
-    const acc = await signer.getAddress();    
+      // user address 
+      const acc = await signer.getAddress();
       contract.tenderCounts().then(async (data) => {
         //Nt number of tenders belongs to this user
         let nt = parseInt(data)
-
+        $("#info").show()
+        $("#data").hide()
         for (i = 1; i <= nt; i++) {
+
           contract.tender(i).then((tender) => {
 
-            if(tender._address== acc){
+            if (tender._address == acc) {
+              $("#data").show()
+              $("#info").hide()
 
-              
-          
-          
-            const tenderTemplate = `<tr style="text-align:center">
+              const tenderTemplate = `<tr style="text-align:center">
                                             <td>${tender[0]}</td>
                                             <td>${tender[1]}</td>
                                             <td>${tender[3]}</td>
                                             <td>${tender[2]}</td>
                                             <td>${tender[4]}</td>
                                             <td>${tender[5]}</td>
-                                            <td><a href="#" onclick="update(${tender[0]});" class="btn btn-info">Update </a ></td>  
+                                            <td><a href="/tenderupdate?id=${tender[0]}" class="btn btn-info">Update </a ></td>  
                                             <td><a href="#" onclick="publish(${tender[0]});" class="btn btn-primary">pulish</a ></td> >                           
                               </tr>`;
-            $("#tenders").append(tenderTemplate);
+              $("#tenders").append(tenderTemplate);
 
-          }
+            }
+
 
           })
 
@@ -113,7 +126,19 @@
 
 
     async function update(id) {
-      await contractW.updateTender(id).then((receipt) => {
+      await contract.tender(id).then((receipt) => {
+
+
+
+
+      })
+
+      window.location.href = "/publishtender"
+
+
+    }
+    async function publish(id) {
+      await contractW.publish(id).then((receipt) => {
       })
 
       window.location.href = "/publishtender"
